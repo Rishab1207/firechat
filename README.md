@@ -1,11 +1,7 @@
-# Features
+# Todo
 
-- Single User Chat
-- Groups
-- Profile Page
-- Authentication with google and mobile phone
-- online/ offline feature
-- filter bad words
-- End 2 End encryption
-- Add friend by searching
-- Notification
+- Encrypt and decrypt messages
+- only 25 messages are showing up
+- Input is not fixed
+- Reverse the order on avatar
+- Reduce the message size width

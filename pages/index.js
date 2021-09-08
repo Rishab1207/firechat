@@ -2,8 +2,6 @@ import {
 	Avatar,
 	Box,
 	Button,
-	Flex,
-	Grid,
 	Heading,
 	Input,
 	InputGroup,
@@ -19,14 +17,8 @@ import { loginWithGoogle, logOut } from "../lib/auth";
 import { getAuth } from "firebase/auth";
 import { app, database } from "../lib/firebase";
 import { AuthContext } from "../store/context/AuthContext";
-import {
-	addDoc,
-	collection,
-	limit,
-	onSnapshot,
-	orderBy,
-	query,
-} from "firebase/firestore";
+import { addDoc, limit, onSnapshot, orderBy, query } from "firebase/firestore";
+import CryptoJS, { AES } from "crypto-js";
 
 const auth = getAuth(app);
 
@@ -48,9 +40,10 @@ export default function Home() {
 				mx="auto"
 				background="#2a2e35"
 			>
+				<Navbar />
+
 				{user && user.currentUser ? (
 					<>
-						<Navbar />
 						<ChatUI />
 					</>
 				) : (
@@ -62,6 +55,8 @@ export default function Home() {
 }
 
 const Navbar = () => {
+	const { user } = useContext(AuthContext);
+
 	const logoutHandler = async () => {
 		const [result, error] = await logOut();
 
@@ -82,7 +77,9 @@ const Navbar = () => {
 				justifyContent="space-between"
 			>
 				<Heading color="white">FireChat 🔥</Heading>
-				<Button onClick={logoutHandler}>Signout</Button>
+				{user && user.currentUser && (
+					<Button onClick={logoutHandler}>Signout</Button>
+				)}
 			</Stack>
 		</>
 	);
@@ -123,7 +120,7 @@ const ChatUI = () => {
 				{messages.map((message) => (
 					<ChatMessage
 						key={message.id}
-						message={message.data.text}
+						ciphertext={message.data.text}
 						uid={message.data.uid}
 						photoUrl={message.data.photoUrl}
 					/>
@@ -141,12 +138,13 @@ const ChatUI = () => {
 
 const ChatMessage = ({
 	name = "Anonymous",
-	message = "Hi Mom 👋",
+	ciphertext = "Hi Mom 👋",
 	timeStamp,
 	uid,
 	photoUrl,
 }) => {
-	const messagesRef = database.messages;
+	const bytes = AES.decrypt(ciphertext, process.env.NEXT_PUBLIC_SECRET_KEY);
+	const message = bytes.toString(CryptoJS.enc.Utf8);
 
 	return (
 		<Stack
@@ -171,7 +169,7 @@ const SendMessage = () => {
 		console.log("send message");
 
 		const messagesRef = await addDoc(database.messagesRef, {
-			text: message,
+			text: AES.encrypt(message, process.env.NEXT_PUBLIC_SECRET_KEY).toString(),
 			createdAt: database.timeStamp,
 			uid: auth.currentUser.uid,
 			photoUrl: auth.currentUser.photoURL,
@@ -223,11 +221,11 @@ const SignIn = () => {
 
 	return (
 		<>
-			<Grid placeItems="center" height="100%">
+			<Box height="100vh" display="grid" placeItems="center" width="100%">
 				<Button leftIcon={<FaGoogle />} size="lg" onClick={onClickHandler}>
 					Sign In Google
 				</Button>
-			</Grid>
+			</Box>
 		</>
 	);
 };
