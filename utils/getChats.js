@@ -11,31 +11,33 @@ import { database } from "../lib/firebase";
 export const getChatsOnLoad = async () => {
 	try {
 		let lastKey = "";
+		let chats = [];
 
+		// make the query
 		const q = query(
 			database.messagesRef,
 			orderBy("createdAt", "desc"),
 			limit(5)
 		);
 
+		// fetch the query
 		onSnapshot(q, (querySnapshot) => {
-			chats = [];
-
 			querySnapshot.forEach((doc) =>
 				chats.push({ data: doc.data(), id: doc.id })
 			);
 
+			console.log("getChats", { chats });
+
+			// reverse the chats
 			chats.reverse();
 
-			lastKey = chats.length > 1 ? chats[0].data.createdAt : undefined;
-
-			setLastMessageKey(lastKey);
-
-			setMessages(chats);
+			lastKey = chats.length > 1 ? chats[0].data.createdAt : null;
 		});
 
-		setLoading(false);
-	} catch (error) {}
+		return [{ chats, lastKey }, null];
+	} catch (error) {
+		return [null, error];
+	}
 };
 
 // Get paginated chats

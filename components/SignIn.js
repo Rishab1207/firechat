@@ -17,13 +17,11 @@ const SignIn = () => {
 	};
 
 	return (
-		<>
-			<Box height="100vh" display="grid" placeItems="center" width="100%">
-				<Button leftIcon={<FaGoogle />} size="lg" onClick={onClickHandler}>
-					Sign In Google
-				</Button>
-			</Box>
-		</>
+		<Box height="100vh" display="grid" placeItems="center" width="100%">
+			<Button leftIcon={<FaGoogle />} size="lg" onClick={onClickHandler}>
+				Sign In Google
+			</Button>
+		</Box>
 	);
 };
 

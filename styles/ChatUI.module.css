@@ -1,0 +1,11 @@
+.overflow::-webkit-scrollbar {
+	width: 0.25rem;
+}
+
+.overflow::-webkit-scrollbar-track {
+	background: #1e1e24;
+}
+
+.overflow::-webkit-scrollbar-thumb {
+	background: #38383a;
+}

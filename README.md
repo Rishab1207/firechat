@@ -21,3 +21,5 @@ if (lastMessageKey !== null) {
 	}
 }
 ```
+
+- When I get the old chats add those chats in the `messages` state in reverse order at the end

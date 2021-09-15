@@ -28,13 +28,7 @@ export default function Home() {
 				<Navbar />
 
 				<Box height="100%">
-					{user && user.currentUser ? (
-						<>
-							<ChatUI />
-						</>
-					) : (
-						<SignIn />
-					)}
+					{user && user.currentUser ? <ChatUI /> : <SignIn />}
 				</Box>
 			</Box>
 		</Layout>

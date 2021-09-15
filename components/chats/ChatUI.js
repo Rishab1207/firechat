@@ -1,19 +1,54 @@
-import { Button } from "@chakra-ui/button";
-import { Box, Stack } from "@chakra-ui/layout";
-import React, { useEffect, useState } from "react";
+import { Box, Flex, Stack } from "@chakra-ui/layout";
+import React, { useEffect, useRef, useState } from "react";
 import ChatMessage from "./ChatMessage";
 import SendMessage from "./SendMessage";
+import { getAuth } from "@firebase/auth";
+import { app, database } from "../../lib/firebase";
+import { limit, onSnapshot, orderBy, query } from "@firebase/firestore";
+import styles from "../../styles/ChatUI.module.css";
+
+const auth = getAuth(app);
 
 const ChatUI = () => {
 	const [messages, setMessages] = useState([]);
-	const [loading, setLoading] = useState(0);
 
-	const onClickHandler = () => console.log("riah");
+	const divRef = useRef(null);
+
+	let chats;
+
+	useEffect(() => {
+		const q = query(
+			database.messagesRef,
+			orderBy("createdAt", "desc"),
+			limit(30)
+		);
+
+		onSnapshot(q, (querySnapshot) => {
+			chats = [];
+
+			querySnapshot.forEach((doc) =>
+				chats.push({ data: doc.data(), id: doc.id })
+			);
+
+			chats.reverse();
+
+			setMessages(chats);
+
+			divRef.current.scrollIntoView({ behavior: "smooth" });
+		});
+
+		return () => console.log("cleanup!");
+	}, []);
 
 	return (
-		<Box position="relative">
+		<Flex direction="column" position="relative" height="87vh">
 			{/* Chat Message */}
-			<Stack spacing={8} padding={5}>
+			<Stack
+				overflowY="scroll"
+				spacing={8}
+				padding={5}
+				className={styles.overflow}
+			>
 				{messages.map((message) => (
 					<ChatMessage
 						key={message.id}
@@ -24,15 +59,13 @@ const ChatUI = () => {
 					/>
 				))}
 
-				<Button onClick={onClickHandler}>Click Me ☺</Button>
+				<div ref={divRef}></div>
 			</Stack>
 			{/* Send Message */}
-			<Box position="absolute" width="100%" bottom={0} left={0}>
-				<SendMessage />
+			<Box mt="auto">
+				<SendMessage divRef={divRef} />
 			</Box>
-
-			<div></div>
-		</Box>
+		</Flex>
 	);
 };
 

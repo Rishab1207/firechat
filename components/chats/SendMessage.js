@@ -8,13 +8,16 @@ import { app, database } from "../../lib/firebase";
 
 const auth = getAuth(app);
 
-const SendMessage = () => {
+const SendMessage = ({ divRef }) => {
 	const [message, setMessage] = useState("");
 
 	const sendMessage = async (e) => {
 		e.preventDefault();
 
 		console.log("send message");
+
+		divRef.current.scrollIntoView({ behavior: "smooth" });
+		setMessage("");
 
 		const messagesRef = await addDoc(database.messagesRef, {
 			text: AES.encrypt(message, process.env.NEXT_PUBLIC_SECRET_KEY).toString(),
@@ -25,8 +28,6 @@ const SendMessage = () => {
 		});
 
 		console.log("Document written with ID: ", messagesRef.id);
-
-		setMessage("");
 	};
 
 	return (
@@ -39,6 +40,9 @@ const SendMessage = () => {
 					placeholder="Send something..."
 					onChange={(e) => setMessage(e.target.value)}
 					color="white"
+					borderColor="#38383a"
+					boxShadow="dark-lg"
+					_hover={{ borderColor: "#1e1e24" }}
 				/>
 				<InputRightElement>
 					<Button
