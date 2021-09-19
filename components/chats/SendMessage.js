@@ -16,7 +16,7 @@ const SendMessage = ({ divRef }) => {
 
 		console.log("send message");
 
-		divRef.current.scrollIntoView({ behavior: "smooth" });
+		divRef?.current.scrollIntoView({ behavior: "smooth" });
 		setMessage("");
 
 		const messagesRef = await addDoc(database.messagesRef, {

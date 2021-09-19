@@ -10,8 +10,6 @@ import ChatUI from "../components/chats/ChatUI";
 export default function Home() {
 	const { user } = useContext(AuthContext);
 
-	console.log("user", user);
-
 	return (
 		<Layout>
 			<Head>
@@ -28,7 +26,13 @@ export default function Home() {
 				<Navbar />
 
 				<Box height="100%">
-					{user && user.currentUser ? <ChatUI /> : <SignIn />}
+					{user && user.currentUser ? (
+						<>
+							<ChatUI />
+						</>
+					) : (
+						<SignIn />
+					)}
 				</Box>
 			</Box>
 		</Layout>

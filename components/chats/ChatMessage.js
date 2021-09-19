@@ -11,8 +11,6 @@ const ChatMessage = ({
 	photoUrl,
 	currentUserId,
 }) => {
-	console.log("why??");
-
 	const bytes = AES.decrypt(ciphertext, process.env.NEXT_PUBLIC_SECRET_KEY);
 	const message = bytes.toString(CryptoJS.enc.Utf8);
 
